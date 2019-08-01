@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/sweetalert/sweetalert.css">
+    <script src="/static/js/jquery-1.11.3.js"></script>
+
+    <script>
+        $(function () {
+            $(".btn-warning").click(function () {
+                var id = this.value;
+                $.ajax({
+                    url: "/up_book",
+                    type: "get",
+                    data: {id: id},
+                    async: true,
+                    dataType: "json",
+                    success: function (data) {
+                        {
+                            $('#title').val(data.title);
+                            $('#author').val(data.author);
+                            $("#read").prop("checked", data.read);
+                            $('#idres').val(data.id)
+                        }
+                    },
+                    error: function () {
+                        console.log("请求出错,请联系管理员!");
+                    }
+                });
+            });
+
+
+        });
+    </script>
+{#    <script type="text/javascript">#}
+{#        //提交表单#}
+{#        function submitForm(btn) {#}
+{#            var btnId = btn.id;            //获取单击按钮的id#}
+{#                    //当前的表单#}
+{#            if (btnId == 'myBtn1') {            //是否是第一个按钮#}
+{#                var f = document.forms[0]#}
+{#                f.action = '/add_book';        //修改action地址#}
+{#            } else if (btnId == 'myBtn2') {        //如果是第二个按钮#}
+{#                var f = document.forms[1]#}
+{#                f.action = '/up_book';        //修改action地址#}
+{#            }#}
+{#            f.submit();                    //提交表单#}
+{#        }#}
+{#    </script>#}
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10">
+            <h1>Books</h1>
+            <hr>
+            <br id="message"> <br>
+            <button data-toggle="modal" data-target="#myModal1" id="addBook" type="button"
+                    class="btn btn-success btn-sm">Add
+                Book
+            </button>
+            <br><br>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Read?</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    {% for u in params.book %}
+                        <tr>
+                            <td>{{ u.title }}</td>
+                            <td>{{ u.author }}</td>
+                            {% if u.read %}
+                                <td>YES</td>
+                            {% else %}
+                                <td>NO</td>
+                            {% endif %}
+                            <td></td>
+
+
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-warning btn-sm" id="updateBook"
+                                            value="{{ u.id }}"
+                                            data-toggle="modal" data-target="#myModal">Update
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="location.href='/del_book?id={{ u.id }}'">Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<body>
+
+<!-- 请求表单，aciton需要自己绑定-->
+<form method="post" action="/up_book" id="form_add">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">信息修改</h4>
+                </div>
+                <div class="modal-body">
+                    <!--数据项-->
+                    <div class="form-group form-inline">
+                        title:<input type="text" name="title" id="title" class="form-control">
+                    </div>
+                    <div class="form-group form-inline">
+                        author:<input type="text" name="author" id="author" class="form-control">
+                    </div>
+                    <div class="form-group form-inline">
+
+                        read:<input type="checkbox" name="read" id="read" class="form-control"
+                    >
+                    </div>
+                    <input type="hidden" name="id" value="" id="idres">
+                    <!-- end-->
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="addSure btn btn-info" id="myBtn2">修改
+                    </button>
+
+
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="post" action="/add_book" id="form_add1">
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">信息添加</h4>
+                </div>
+                <div class="modal-body">
+                    <!--数据项-->
+                    <div class="form-group form-inline">
+                        title:<input type="text" name="title"  class="form-control">
+                    </div>
+                    <div class="form-group form-inline">
+                        author:<input type="text" name="author"  class="form-control">
+                    </div>
+                    <div class="form-group form-inline">
+
+                        read:<input type="checkbox" name="read" class="form-control">
+                    </div>
+
+                    <!-- end-->
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="addSure1 btn btn-info" id="myBtn1" onclick="submitForm(this)">添加
+                    </button>
+
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</body>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+    //提交表单的方法
+    $(".addSure").click(function () {
+        $("#form_add").submit();
+    });
+    $(".addSure1").click(function () {
+        $("#form_add1").submit();
+    });
+
+</script>
+
+</body>
+</html>
